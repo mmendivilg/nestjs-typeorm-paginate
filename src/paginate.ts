@@ -66,6 +66,7 @@ export async function paginateRaw<
   ];
 
   if (countQueries) {
+    console.log('HIA');
     promises[1] =
       countQueryType === CountQueryTypeEnum.RAW
         ? countQuery(queryBuilder, cacheOption)
