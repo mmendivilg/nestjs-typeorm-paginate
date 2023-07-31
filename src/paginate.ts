@@ -231,6 +231,7 @@ async function paginateQueryBuilder<T, CustomMetaType = IPaginationMeta>(
   ];
 
   if (countQueries) {
+    console.log('HIA1')
     promises[1] =
     countQueryType === CountQueryTypeEnum.RAW
       ? countQuery(queryBuilder, cacheOption)
