@@ -52,8 +52,15 @@ export async function paginateRaw<
   queryBuilder: SelectQueryBuilder<T>,
   options: IPaginationOptions<CustomMetaType>,
 ): Promise<Pagination<T, CustomMetaType>> {
-  const [page, limit, route, paginationType, countQueries, countQueryType, cacheOption] =
-    resolveOptions(options);
+  const [
+    page,
+    limit,
+    route,
+    paginationType,
+    countQueries,
+    countQueryTypeA,
+    cacheOption,
+  ] = resolveOptions(options);
 
   const promises: [Promise<T[]>, Promise<number> | undefined] = [
     (paginationType === PaginationTypeEnum.LIMIT_AND_OFFSET
@@ -68,7 +75,7 @@ export async function paginateRaw<
   if (countQueries) {
     console.log('HIA');
     promises[1] =
-      countQueryType === CountQueryTypeEnum.RAW
+      countQueryTypeA === CountQueryTypeEnum.RAW
         ? countQuery(queryBuilder, cacheOption)
         : queryBuilder.cache(cacheOption).getCount();
   }
@@ -93,8 +100,15 @@ export async function paginateRawAndEntities<
   queryBuilder: SelectQueryBuilder<T>,
   options: IPaginationOptions<CustomMetaType>,
 ): Promise<[Pagination<T, CustomMetaType>, Partial<T>[]]> {
-  const [page, limit, route, paginationType, countQueries, countQueryType, cacheOption] =
-    resolveOptions(options);
+  const [
+    page,
+    limit,
+    route,
+    paginationType,
+    countQueries,
+    countQueryType,
+    cacheOption,
+  ] = resolveOptions(options);
 
   const promises: [
     Promise<{ entities: T[]; raw: T[] }>,
@@ -134,7 +148,15 @@ export async function paginateRawAndEntities<
 
 function resolveOptions(
   options: IPaginationOptions<any>,
-): [number, number, string, PaginationTypeEnum, boolean, CountQueryTypeEnum, TypeORMCacheType] {
+): [
+  number,
+  number,
+  string,
+  PaginationTypeEnum,
+  boolean,
+  CountQueryTypeEnum,
+  TypeORMCacheType,
+] {
   const page = resolveNumericOption(options, 'page', DEFAULT_PAGE);
   const limit = resolveNumericOption(options, 'limit', DEFAULT_LIMIT);
   const route = options.route;
@@ -145,7 +167,15 @@ function resolveOptions(
   const cacheQueries = options.cacheQueries || false;
   const countQueryType = options.countQueryType || CountQueryTypeEnum.RAW;
 
-  return [page, limit, route, paginationType, countQueries, countQueryType, cacheQueries];
+  return [
+    page,
+    limit,
+    route,
+    paginationType,
+    countQueries,
+    countQueryType,
+    cacheQueries,
+  ];
 }
 
 function resolveNumericOption(
@@ -217,8 +247,15 @@ async function paginateQueryBuilder<T, CustomMetaType = IPaginationMeta>(
   queryBuilder: SelectQueryBuilder<T>,
   options: IPaginationOptions<CustomMetaType>,
 ): Promise<Pagination<T, CustomMetaType>> {
-  const [page, limit, route, paginationType, countQueries, countQueryType, cacheOption] =
-    resolveOptions(options);
+  const [
+    page,
+    limit,
+    route,
+    paginationType,
+    countQueries,
+    countQueryType,
+    cacheOption,
+  ] = resolveOptions(options);
 
   const promises: [Promise<T[]>, Promise<number> | undefined] = [
     (PaginationTypeEnum.LIMIT_AND_OFFSET === paginationType
@@ -231,11 +268,11 @@ async function paginateQueryBuilder<T, CustomMetaType = IPaginationMeta>(
   ];
 
   if (countQueries) {
-    console.log('HIA1')
+    console.log('HIA1');
     promises[1] =
-    countQueryType === CountQueryTypeEnum.RAW
-      ? countQuery(queryBuilder, cacheOption)
-      : queryBuilder.cache(cacheOption).getCount();
+      countQueryType === CountQueryTypeEnum.RAW
+        ? countQuery(queryBuilder, cacheOption)
+        : queryBuilder.cache(cacheOption).getCount();
   }
 
   const [items, total] = await Promise.all(promises);
